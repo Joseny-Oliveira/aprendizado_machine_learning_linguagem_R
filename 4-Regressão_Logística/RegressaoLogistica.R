@@ -76,3 +76,57 @@ modelo
 
 df$Instant.Liking <- as.factor(df$Instant.Liking)
 
+
+# Ajuste fino 
+
+View(modelo$results[1:3])
+modelo$bestTune$lambda
+seq(0.1,1, length.out = 19)
+alpha <-seq(0.1,1, length.out = 19)
+lambda <- modelo$bestTune$lambda
+
+ajuste <- expand.grid(alpha = alpha,
+                      lambda = lambda)
+
+# Modelo 1 
+
+set.seed(1)
+modelo1 <- train(Instant.Liking ~ .,
+                data = df,
+                method = "glmnet",
+                tuneGrid = ajuste, 
+                trControl = trainControl(method = "cv", 
+                                         number = 5))
+modelo1$bestTune
+mean(modelo1$resample$Accuracy)
+View(modelo1$results[1:3])
+
+# Modelo 2 
+
+alpha <- c(0.25,0.4)
+seq(0.001 , 1, length.out =10)
+lambda <- seq(0.001 , 1, length.out =10)
+
+ajuste <- expand.grid(alpha = alpha,
+                      lambda = lambda)
+
+set.seed(1)
+modelo2 <- train(Instant.Liking ~ .,
+                 data = df,
+                 method = "glmnet",
+                 tuneGrid = ajuste, 
+                 trControl = trainControl(method = "cv", 
+                                          number = 5))
+modelo2$bestTune
+mean(modelo2$resample$Accuracy)
+View(modelo2$results[1:3])
+
+
+mean(modelo$resample$Accuracy)
+mean(modelo1$resample$Accuracy)
+mean(modelo2$resample$Accuracy)
+
+
+
+
+
